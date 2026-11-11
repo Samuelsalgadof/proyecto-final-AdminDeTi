@@ -1,0 +1,4 @@
+# /etc/exports (srv-sena)
+/srv/nfs/compartido 192.168.56.0/24(rw,sync,no_subtree_check,root_squash) 192.168.80.0/24(rw,sync,no_subtree_check,root_squash)
+/srv/nfs/home       192.168.56.0/24(rw,sync,no_subtree_check,root_squash)
+/srv/nfs/raiz       192.168.56.0/24(ro,sync,no_subtree_check,crossmnt)

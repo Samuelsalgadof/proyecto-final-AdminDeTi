@@ -1,0 +1,36 @@
+graph LR
+    subgraph Clientes["Red local SENA 192.168.56.0/24 y 192.168.80.0/24"]
+        U[Navegador de aprendices e instructores]
+        CL[cli-sena 192.168.56.20<br/>Cliente Linux]
+        W[PC Windows / Mac<br/>Coordinación académica]
+    end
+
+    subgraph SRV["srv-sena: Ubuntu Server 24.04 en VirtualBox<br/>2 vCPU, 4 GB RAM, 40 GB<br/>192.168.56.10 host-only / 192.168.80.50 bridged"]
+        subgraph DK["Dokploy (Docker Swarm)"]
+            T[Traefik<br/>80/443 HTTPS]
+            APP[sena-web<br/>Node.js + Express :3000]
+            DB[(PostgreSQL 16<br/>sena-db :5432 red interna)]
+            P[Panel Dokploy :3000]
+        end
+        NTP[NTP ntpsec<br/>123/udp]
+        NFS[NFS nfs-kernel-server<br/>2049/tcp, 111 rpcbind]
+        NIS[NIS ypserv dominio sena.nis<br/>111 + puertos RPC]
+        CUPS[CUPS + cups-pdf<br/>631/tcp IPP]
+        SMB[Samba smbd/nmbd<br/>445, 139/tcp]
+    end
+
+    INET[(Internet<br/>pool.ntp.org, GitHub)]
+
+    U -- "https://sena.192-168-56-10.traefik.me" --> T
+    T --> APP
+    APP --> DB
+    APP -. "código desde Git" .- INET
+    NTP -- "sincroniza con" --> INET
+    CL -- "hora" --> NTP
+    CL -- "monta /srv/nfs/compartido y /srv/nfs/home" --> NFS
+    CL -- "autenticación aprendiz1, instructor1" --> NIS
+    CL -- "imprime en SENA-Impresora" --> CUPS
+    W -- "carpeta documentos por SMB" --> SMB
+    W -- "hora (w32tm)" --> NTP
+    NIS -. "mismos usuarios y UID" .- NFS
+    NIS -. "mismos usuarios" .- SMB

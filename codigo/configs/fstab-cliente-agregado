@@ -1,0 +1,3 @@
+# Montajes NFS permanentes (cli-sena)
+srv-sena:/srv/nfs/compartido /mnt/compartido nfs defaults,_netdev 0 0
+srv-sena:/srv/nfs/home       /srv/nfs/home   nfs defaults,_netdev 0 0

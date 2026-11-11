@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SENA - Servicio Nacional de Aprendizaje</title>
+  <style>
+    :root { --verde: #39A900; --oscuro: #00324D; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, Arial, sans-serif; color: #222; background: #f5f7f5; }
+    header { background: var(--oscuro); color: #fff; padding: 20px 16px; }
+    header h1 { margin: 0; font-size: 1.6rem; }
+    header p { margin: 4px 0 0; color: #cfe8c0; }
+    nav { background: var(--verde); padding: 8px 16px; }
+    nav a { color: #fff; margin-right: 16px; text-decoration: none; font-weight: 600; }
+    main { max-width: 960px; margin: 0 auto; padding: 16px; }
+    section { background: #fff; border-radius: 8px; padding: 16px 20px; margin: 16px 0; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    h2 { color: var(--oscuro); border-left: 5px solid var(--verde); padding-left: 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #e3e3e3; }
+    th { background: #eef6e8; }
+    form { display: grid; gap: 10px; max-width: 420px; }
+    input, select, button { padding: 8px; font-size: 1rem; }
+    button { background: var(--verde); color: #fff; border: 0; border-radius: 4px; cursor: pointer; }
+    .ok { background: #e6f5dc; padding: 8px; border-radius: 4px; }
+    footer { text-align: center; color: #666; padding: 24px 16px; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SENA - Servicio Nacional de Aprendizaje</h1>
+    <p>Formación gratuita para el trabajo y el desarrollo de Colombia</p>
+  </header>
+  <nav><a href="#nosotros">Nosotros</a><a href="#programas">Programas</a><a href="#inscripcion">Inscripción</a><a href="#servicios">Servicios TI</a></nav>
+  <main>
+    <section id="nosotros">
+      <h2>Quiénes somos</h2>
+      <p>El SENA es un establecimiento público del orden nacional, adscrito al Ministerio del Trabajo, que ofrece formación profesional integral gratuita en programas técnicos, tecnológicos y complementarios en todos los departamentos del país.</p>
+      <p><strong>Misión:</strong> invertir en el desarrollo social y técnico de los trabajadores colombianos, ofreciendo formación profesional integral para la incorporación y el desarrollo de las personas en actividades productivas.</p>
+    </section>
+    <section id="programas">
+      <h2>Programas de formación (desde la base de datos)</h2>
+      <table><thead><tr><th>#</th><th>Programa</th><th>Nivel</th><th>Duración</th></tr></thead>
+        <tbody id="tabla-programas"><tr><td colspan="4">Cargando...</td></tr></tbody></table>
+    </section>
+    <section id="inscripcion">
+      <h2>Registro de interés</h2>
+      <div id="mensaje"></div>
+      <form method="post" action="/api/inscripciones">
+        <input name="nombre" placeholder="Nombre completo" required>
+        <input name="correo" type="email" placeholder="Correo electrónico" required>
+        <select name="programa_id" id="select-programa" required></select>
+        <button type="submit">Registrarme</button>
+      </form>
+    </section>
+    <section id="servicios">
+      <h2>Servicios de infraestructura del centro de formación</h2>
+      <ul>
+        <li>Portal web institucional con HTTPS (Dokploy + Traefik)</li>
+        <li>Base de datos PostgreSQL de programas e inscripciones</li>
+        <li>Hora sincronizada en toda la red (NTP)</li>
+        <li>Cuentas únicas para aprendices e instructores (NIS)</li>
+        <li>Carpetas compartidas en Linux (NFS) y Windows (Samba)</li>
+        <li>Impresión centralizada en ambientes de formación (CUPS)</li>
+      </ul>
+    </section>
+  </main>
+  <footer>Proyecto académico - Administración de Infraestructura de TI - Universidad del Quindío</footer>
+  <script>
+    if (location.search.includes('ok=1')) document.getElementById('mensaje').innerHTML = '<p class="ok">Registro guardado en la base de datos.</p>';
+    fetch('/api/programas').then(r => r.json()).then(ps => {
+      document.getElementById('tabla-programas').innerHTML = ps.map(p =>
+        `<tr><td>${p.id}</td><td>${p.nombre}</td><td>${p.nivel}</td><td>${p.duracion}</td></tr>`).join('');
+      document.getElementById('select-programa').innerHTML = ps.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+    }).catch(() => { document.getElementById('tabla-programas').innerHTML = '<tr><td colspan="4">Error conectando con la base de datos</td></tr>'; });
+  </script>
+</body>
+</html>

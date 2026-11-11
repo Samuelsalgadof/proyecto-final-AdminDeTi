@@ -1,0 +1,4 @@
+# Agregado al final de /etc/ntpsec/ntp.conf (srv-sena)
+server pool.ntp.org iburst
+restrict 192.168.56.0 mask 255.255.255.0 nomodify notrap
+restrict 192.168.80.0 mask 255.255.255.0 nomodify notrap

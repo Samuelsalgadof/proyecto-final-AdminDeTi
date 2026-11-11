@@ -1,0 +1,3 @@
+# Bind para la carpeta raiz exportada por NFS (srv-sena)
+/home /srv/nfs/raiz/home none bind 0 0
+/etc  /srv/nfs/raiz/etc  none bind 0 0

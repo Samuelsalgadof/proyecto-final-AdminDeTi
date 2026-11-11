@@ -1,0 +1,2 @@
+# /etc/yp.conf (cli-sena)
+domain sena.nis server srv-sena
