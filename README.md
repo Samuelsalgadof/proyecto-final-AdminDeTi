@@ -4,7 +4,7 @@ Implementación de servicios de infraestructura para un centro de formación del
 
 **Curso:** Administración de Infraestructura de TI, Universidad del Quindío, 2026-1
 **Empresa:** SENA, Servicio Nacional de Aprendizaje
-**Equipo:** Samuel Salgado Figueroa, Maria José, Luisa
+**Equipo:** Maria José Vasquez, Samuel Salgado y Luisa Fernanda Osorio
 
 ## Documentos de entrega
 

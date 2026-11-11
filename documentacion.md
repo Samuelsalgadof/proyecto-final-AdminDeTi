@@ -2,7 +2,7 @@
 
 **Empresa:** SENA, Servicio Nacional de Aprendizaje (centro de formación)
 **Curso:** Administración de Infraestructura de TI, Universidad del Quindío, 2026-1
-**Implementación:** Samuel Salgado Figueroa
+**Equipo:** Maria José Vasquez, Samuel Salgado y Luisa Fernanda Osorio
 **Fecha de implementación:** 10 de noviembre de 2026
 
 Este documento registra paso a paso cómo se montó la infraestructura, con los comandos ejecutados, la salida obtenida y la captura de cada verificación. El análisis de necesidades y la justificación están en [analisis.md](analisis.md) y la arquitectura en [diagrama.mmd](diagrama.mmd).

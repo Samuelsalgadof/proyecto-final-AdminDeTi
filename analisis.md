@@ -1,7 +1,7 @@
 # Análisis y diseño de la infraestructura de TI: SENA
 
 **Empresa:** SENA, Servicio Nacional de Aprendizaje (Colombia)
-**Equipo:** Samuel Salgado Figueroa, Maria José, Luisa
+**Equipo:** Maria José Vasquez, Samuel Salgado y Luisa Fernanda Osorio
 **Curso:** Administración de Infraestructura de TI, Universidad del Quindío, 2026-1
 
 ## 1. Contexto de la organización
