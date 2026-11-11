@@ -11,7 +11,7 @@ Implementación de servicios de infraestructura para un centro de formación del
 | Archivo | Contenido |
 | --- | --- |
 | [analisis.md](analisis.md) | Contexto del SENA, necesidades, justificación de cada servicio, tabla de requisitos, nivel ICREA y costo-beneficio |
-| [diagrama.mmd](diagrama.mmd) | Diagrama de arquitectura en Mermaid (se ve directo en GitHub) |
+| [diagrama.mmd](diagrama.mmd) | Diagrama de arquitectura en Mermaid (se puede abrir en mermaid.live); la versión resumida se ve dentro de analisis.md |
 | [documentacion.md](documentacion.md) | Instalación paso a paso con comandos, resultados, capturas, problemas encontrados y tabla de la rúbrica |
 | [capturas/](capturas/) | 38 evidencias numeradas en el orden de la documentación |
 | [codigo/](codigo/) | Sitio web desplegado en Dokploy y archivos de configuración de cada servicio |
