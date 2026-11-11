@@ -2,7 +2,7 @@
 
 **Empresa:** SENA, Servicio Nacional de Aprendizaje (Colombia)
 **Equipo:** Maria José Vasquez, Samuel Salgado y Luisa Fernanda Osorio
-**Curso:** Administración de Infraestructura de TI, Universidad del Quindío, 2026-1
+**Materia:** Administración de Infraestructura de TI, Universidad del Quindío, 2026-1
 
 ## 1. Contexto de la organización
 

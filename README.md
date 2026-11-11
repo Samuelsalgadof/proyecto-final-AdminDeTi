@@ -2,7 +2,7 @@
 
 Implementación de servicios de infraestructura para un centro de formación del SENA usando Dokploy y servicios Linux, en una VM Ubuntu Server 24.04.
 
-**Curso:** Administración de Infraestructura de TI, Universidad del Quindío, 2026-1
+**Materia:** Administración de Infraestructura de TI, Universidad del Quindío, 2026-1
 **Empresa:** SENA, Servicio Nacional de Aprendizaje
 **Equipo:** Maria José Vasquez, Samuel Salgado y Luisa Fernanda Osorio
 

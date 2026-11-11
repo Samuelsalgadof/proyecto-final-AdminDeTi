@@ -1,7 +1,7 @@
 # Documentación técnica: infraestructura SENA
 
 **Empresa:** SENA, Servicio Nacional de Aprendizaje (centro de formación)
-**Curso:** Administración de Infraestructura de TI, Universidad del Quindío, 2026-1
+**Materia:** Administración de Infraestructura de TI, Universidad del Quindío, 2026-1
 **Equipo:** Maria José Vasquez, Samuel Salgado y Luisa Fernanda Osorio
 **Fecha de implementación:** 10 de noviembre de 2026
 
