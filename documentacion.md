@@ -1,5 +1,48 @@
 # Documentación técnica: infraestructura SENA
 
+**Empresa:** SENA, Servicio Nacional de Aprendizaje (centro de formación)
+**Curso:** Administración de Infraestructura de TI, Universidad del Quindío, 2026-1
+**Implementación:** Samuel Salgado Figueroa
+**Fecha de implementación:** 10 de noviembre de 2026
+
+Este documento registra paso a paso cómo se montó la infraestructura, con los comandos ejecutados, la salida obtenida y la captura de cada verificación. El análisis de necesidades y la justificación están en [analisis.md](analisis.md) y la arquitectura en [diagrama.mmd](diagrama.mmd).
+
+## Contenido
+
+1. [Entorno y máquinas virtuales](#1-entorno-y-máquina-virtual-del-servidor)
+2. [Dokploy](#2-dokploy)
+3. [Base de datos PostgreSQL](#3-base-de-datos-postgresql)
+4. [Servicio web, dominio y HTTPS](#4-servicio-web-dominio-y-https)
+5. [NTP](#5-ntp)
+6. [NIS](#6-nis)
+7. [NFS](#7-nfs)
+8. [Samba](#8-samba)
+9. [CUPS](#9-cups)
+10. [Extras: firewall y respaldo](#10-extras)
+11. [Problemas encontrados y solución](#11-problemas-encontrados-y-solución)
+12. [Resumen de verificación (rúbrica)](#12-resumen-de-verificación-rúbrica)
+13. [Conclusiones](#13-conclusiones)
+
+## Resumen de la implementación
+
+| Equipo | Rol | IP puente (red SENA) | IP solo anfitrión | Recursos |
+| --- | --- | --- | --- | --- |
+| srv-sena | Servidor de todos los servicios | 192.168.80.50 | 192.168.56.10 | 2 vCPU, 4 GB RAM, 40 GB |
+| cli-sena | Cliente Linux de pruebas (NTP, NIS, NFS, CUPS, Samba) | 192.168.80.51 | 192.168.56.20 | 1 vCPU, 2 GB RAM |
+| PC Windows | Anfitrión de VirtualBox y cliente Windows (Samba, web, CUPS) | 192.168.80.14 (DHCP) | 192.168.56.1 | n/a |
+
+| Servicio | Dónde se prueba | Estado |
+| --- | --- | --- |
+| Dokploy + web HTTPS + PostgreSQL | https://sena.192-168-56-10.traefik.me | ✅ |
+| NTP (ntpsec) | cli-sena sincroniza con 192.168.56.10 | ✅ |
+| NIS (dominio `sena.nis`) | inicio de sesión de aprendiz1 en cli-sena | ✅ |
+| NFS | `/srv/nfs/compartido`, `/srv/nfs/home`, `/srv/nfs/raiz` montados en cli-sena | ✅ |
+| Samba | `\\192.168.80.50\documentos` desde Windows y `smbclient` desde cli-sena | ✅ |
+| CUPS | `SENA-Impresora` (CUPS-PDF), impresión desde cli-sena | ✅ |
+| Extras | UFW y respaldo diario de la base de datos | ✅ |
+
+Usuarios del dominio NIS: `aprendiz1`, `aprendiz2` e `instructor1` (grupo `sena-staff`). Las contraseñas que aparecen en este documento (`sena2026` para usuarios y la de la base de datos) son **solo de laboratorio**; en un centro real se cambiarían y no se publicarían.
+
 ## 1. Entorno y máquina virtual del servidor
 
 | Elemento | Valor |
@@ -618,3 +661,11 @@ Para restaurar: `zcat sena-FECHA.sql.gz | docker exec -i <contenedor> psql -U se
 | Samba | 19, 20, 21, 22 |
 | CUPS | 23a, 23, 24, 25 |
 | Extras: firewall y respaldo automático | 26, 27 |
+
+## 13. Conclusiones
+
+- Se implementaron los **6 servicios** pedidos (Dokploy con web HTTPS y base de datos, NTP, NIS, NFS, Samba y CUPS) más dos extras (firewall UFW y respaldo automático), todos en un solo servidor Ubuntu Server 24.04 y probados desde un cliente Linux y desde Windows.
+- NIS y NFS funcionan juntos: una cuenta creada una sola vez en el servidor inicia sesión en el cliente y encuentra su carpeta personal, que vive en el servidor. Esto resuelve la rotación trimestral de aprendices del SENA.
+- Los permisos se comprobaron con pruebas negativas: `root_squash` bloquea al root del cliente, solo el grupo `sena-staff` escribe en la carpeta compartida, `raiz` es de solo lectura y Samba solo acepta usuarios de `sambashare`.
+- Dokploy simplificó el despliegue de la web y la base de datos (contenedores, proxy Traefik y certificado) desde un panel; los servicios clásicos de Linux se configuraron a mano.
+- Limitaciones: el certificado HTTPS es autofirmado porque el servidor no es accesible desde internet (Let's Encrypt lo exige), y un único servidor es punto único de falla (nivel I según ICREA, ver [analisis.md](analisis.md)).

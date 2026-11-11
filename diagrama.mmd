@@ -9,7 +9,7 @@ graph LR
         subgraph DK["Dokploy (Docker Swarm)"]
             T[Traefik<br/>80/443 HTTPS]
             APP[sena-web<br/>Node.js + Express :3000]
-            DB[(PostgreSQL 16<br/>sena-db :5432 red interna)]
+            DB[(PostgreSQL 18<br/>sena-db :5432 red interna)]
             P[Panel Dokploy :3000]
         end
         NTP[NTP ntpsec<br/>123/udp]
@@ -17,20 +17,23 @@ graph LR
         NIS[NIS ypserv dominio sena.nis<br/>111 + puertos RPC]
         CUPS[CUPS + cups-pdf<br/>631/tcp IPP]
         SMB[Samba smbd/nmbd<br/>445, 139/tcp]
+        FW[UFW firewall<br/>deny por defecto]
+        BK[Respaldo diario<br/>cron 2:00 + pg_dump]
     end
 
-    INET[(Internet<br/>pool.ntp.org, GitHub)]
+    INET[(Internet<br/>pool.ntp.org, repositorios Ubuntu)]
 
     U -- "https://sena.192-168-56-10.traefik.me" --> T
     T --> APP
     APP --> DB
-    APP -. "código desde Git" .- INET
+    BK -. "copia" .- DB
     NTP -- "sincroniza con" --> INET
     CL -- "hora" --> NTP
     CL -- "monta /srv/nfs/compartido y /srv/nfs/home" --> NFS
     CL -- "autenticación aprendiz1, instructor1" --> NIS
     CL -- "imprime en SENA-Impresora" --> CUPS
     W -- "carpeta documentos por SMB" --> SMB
-    W -- "hora (w32tm)" --> NTP
+    W -- "administración web :631" --> CUPS
+    CL -- "smbclient" --> SMB
     NIS -. "mismos usuarios y UID" .- NFS
     NIS -. "mismos usuarios" .- SMB

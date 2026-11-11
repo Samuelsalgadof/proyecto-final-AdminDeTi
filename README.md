@@ -3,7 +3,18 @@
 Implementación de servicios de infraestructura para un centro de formación del SENA usando Dokploy y servicios Linux, en una VM Ubuntu Server 24.04.
 
 **Curso:** Administración de Infraestructura de TI, Universidad del Quindío, 2026-1
+**Empresa:** SENA, Servicio Nacional de Aprendizaje
 **Equipo:** Samuel Salgado Figueroa, Maria José, Luisa
+
+## Documentos de entrega
+
+| Archivo | Contenido |
+| --- | --- |
+| [analisis.md](analisis.md) | Contexto del SENA, necesidades, justificación de cada servicio, tabla de requisitos, nivel ICREA y costo-beneficio |
+| [diagrama.mmd](diagrama.mmd) | Diagrama de arquitectura en Mermaid (se ve directo en GitHub) |
+| [documentacion.md](documentacion.md) | Instalación paso a paso con comandos, resultados, capturas, problemas encontrados y tabla de la rúbrica |
+| [capturas/](capturas/) | 38 evidencias numeradas en el orden de la documentación |
+| [codigo/](codigo/) | Sitio web desplegado en Dokploy y archivos de configuración de cada servicio |
 
 ## Servicios implementados
 
@@ -40,5 +51,12 @@ proyecto-final/
 2. Aplicar `codigo/configs/netplan-srv-sena.yaml`.
 3. Instalar Dokploy: `curl -sSL https://dokploy.com/install.sh | sudo ADVERTISE_ADDR=192.168.56.10 sh`.
 4. Crear en Dokploy el proyecto `sena` con una base PostgreSQL y una aplicación que use `codigo/sitio-sena` (proveedor Drop con el .zip de la carpeta, o Git) con Build Type Dockerfile y la variable `DATABASE_URL` de la base PostgreSQL creada en Dokploy.
-5. Seguir `documentacion.md` para NTP, NIS, NFS, Samba y CUPS.
+5. Seguir [documentacion.md](documentacion.md) para NTP, NIS, NFS, Samba, CUPS y los extras.
 
+## Entorno
+
+- **srv-sena:** Ubuntu Server 24.04.3 en VirtualBox, 192.168.80.50 (puente) y 192.168.56.10 (solo anfitrión).
+- **cli-sena:** clon del servidor usado como cliente Linux, 192.168.80.51 y 192.168.56.20.
+- **Cliente Windows:** el PC anfitrión, para Samba, la web y la administración de CUPS.
+
+> Las contraseñas que aparecen en la documentación son solo de laboratorio.

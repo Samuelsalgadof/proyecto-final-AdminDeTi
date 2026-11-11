@@ -24,7 +24,7 @@ Este diseño modela la infraestructura de **un centro de formación** con un ser
 
 ## 3. Justificación de cada servicio
 
-**Dokploy + Web (HTTPS).** Dokploy es un PaaS auto-alojado gratuito que despliega la aplicación desde Git, gestiona la base de datos y configura Traefik como proxy inverso con TLS. Evita pagar hosting externo y permite que el equipo de TI del centro actualice el sitio con un `git push`. HTTPS protege los datos personales del formulario (Ley 1581 de 2012 de protección de datos).
+**Dokploy + Web (HTTPS).** Dokploy es un PaaS auto-alojado gratuito que construye y despliega la aplicación (desde Git o cargando el código en un .zip), gestiona la base de datos y configura Traefik como proxy inverso con TLS. Evita pagar hosting externo y permite que el equipo de TI del centro actualice el sitio con un nuevo despliegue desde el panel. HTTPS protege los datos personales del formulario (Ley 1581 de 2012 de protección de datos).
 
 **Base de datos PostgreSQL.** Motor libre y robusto. Corre como servicio de Dokploy en la red interna de Docker, sin exponer el puerto 5432 a la red, y la aplicación se conecta con la URL interna.
 
@@ -36,7 +36,9 @@ Este diseño modela la infraestructura de **un centro de formación** con un ser
 
 **Samba.** La coordinación académica y administrativa usa Windows. Samba ofrece la carpeta `documentos` por SMB, con usuarios autenticados del grupo `sambashare`.
 
-**CUPS.** Centraliza las colas de impresión de los ambientes: un solo punto para administrar impresoras, ver trabajos y controlar el uso. En el laboratorio se usa una impresora virtual cups-pdf.
+**CUPS.** Centraliza las colas de impresión de los ambientes: un solo punto para administrar impresoras, ver trabajos y controlar el uso. En el laboratorio se usa una impresora virtual cups-pdf (`SENA-Impresora`), que guarda cada trabajo como PDF.
+
+**Extras: firewall y respaldos.** Como el servidor concentra todos los servicios, se agregó UFW (todo cerrado por defecto, servicios internos solo para las redes del SENA) y un respaldo diario automático de la base de datos de inscripciones, que contiene datos personales de aspirantes.
 
 ## 4. Tabla de requisitos
 
@@ -44,13 +46,15 @@ Este diseño modela la infraestructura de **un centro de formación** con un ser
 | --- | --- | --- | --- | --- | --- | --- |
 | Panel Dokploy | Dokploy | 192.168.56.10 | 3000 | TCP (HTTP) | Gestión PaaS | Navegador |
 | Web institucional | Traefik + Node.js | 192.168.56.10 | 80, 443 | TCP (HTTP/HTTPS) | Aplicación web | Navegador |
-| Base de datos | PostgreSQL 16 | Red interna Docker | 5432 | TCP | Base de datos | App sena-web |
+| Base de datos | PostgreSQL 18 | Red interna Docker | 5432 | TCP | Base de datos | App sena-web |
 | NTP | ntpsec | 192.168.56.10 | 123 | UDP | Sincronización horaria | cli-sena (timesyncd) |
 | NFS | nfs-kernel-server | 192.168.56.10 | 2049, 111 | TCP/UDP (NFSv4, RPC) | Archivos Linux | cli-sena |
 | NIS | ypserv, ypbind | 192.168.56.10 | 111 + puertos RPC dinámicos | TCP/UDP (RPC) | Autenticación | cli-sena |
-| CUPS | cups, cups-pdf | 192.168.56.10 | 631 | TCP (IPP/HTTP) | Impresión | cli-sena, navegador |
+| CUPS | cups, cups-pdf | 192.168.80.50 / 192.168.56.10 | 631 | TCP (IPP/HTTPS) | Impresión | cli-sena (`lp`), navegador en Windows |
 | Samba | smbd, nmbd | 192.168.80.50 / 192.168.56.10 | 445, 139 TCP; 137-138 UDP | SMB/CIFS | Archivos Windows | Windows / Mac / Linux |
-| SSH | OpenSSH | 192.168.56.10 | 22 | TCP | Administración remota | Equipo del administrador |
+| SSH | OpenSSH | 192.168.56.10 | 22 | TCP | Administración remota | PowerShell en el equipo del administrador |
+| Firewall (extra) | UFW | srv-sena | todos | TCP/UDP | Seguridad perimetral | `ufw status verbose` |
+| Respaldo (extra) | cron + pg_dump | srv-sena | n/a | n/a | Copia diaria de la base de datos | `/srv/backups/sena-db` |
 
 ## 5. Arquitectura
 
@@ -69,6 +73,7 @@ graph LR
     CL --> NIS
     CL --> CUPS
     W[Windows/Mac] --> SMB
+    W --> CUPS
 ```
 
 El diagrama completo está en [diagrama.mmd](diagrama.mmd).
@@ -77,7 +82,7 @@ El diagrama completo está en [diagrama.mmd](diagrama.mmd).
 
 ## 6. Disponibilidad y nivel de centro de datos
 
-Según la norma ICREA-Std-131-2023, esta implementación corresponde a un **Nivel I** (sin redundancia, componentes N, disponibilidad de referencia 95 %), adecuado para un laboratorio o un centro pequeño. Para producción se recomienda subir a Nivel II con: segundo servidor NIS esclavo (`ypinit -s`), respaldos automáticos fuera del servidor, UPS y discos en RAID 1.
+Según la norma ICREA-Std-131-2023, esta implementación corresponde a un **Nivel I** (sin redundancia, componentes N, disponibilidad de referencia 95 %), adecuado para un laboratorio o un centro pequeño. Ya se implementó un respaldo automático diario de la base de datos y un firewall. Para producción se recomienda subir a Nivel II con: segundo servidor NIS esclavo (`ypinit -s`), copia de los respaldos fuera del servidor, UPS y discos en RAID 1.
 
 ## 7. Costo-beneficio
 
